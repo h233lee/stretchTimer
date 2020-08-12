@@ -50,13 +50,15 @@ require('./passportConfig')(passport);
 app.post('/register', (req, res) => {
   User.findOne({ email: req.body.email }, async (err, user) => {
     if (err) throw err;
-    if (user) res.json(user);
+    if (user) res.json(user).send('user already exists');
     if (!user) {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
       const user = new User({
         email: req.body.email,
         password: hashedPassword,
+        timer: req.body.timer,
+        alert: req.body.alert,
       });
       await user.save();
       res.json(user);
@@ -103,6 +105,7 @@ app.get('/user', (req, res) => {
 app.get('/logout', (req, res) => {
   req.logout();
   req.session.destroy();
+  res.send('/');
 });
 //----------------------------------------- END OF ROUTES---------------------------------------------------
 //Start Server

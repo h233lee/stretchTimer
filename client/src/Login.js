@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import Axios from 'axios';
 import { GoogleLogin } from 'react-google-login';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 
 export const Login = () => {
   const [registerEmail, setRegisterEmail] = useState('');
@@ -26,6 +26,8 @@ export const Login = () => {
       data: {
         email: registerEmail,
         password: registerPassword,
+        timer: 0,
+        alert: 0,
       },
       withCredentials: true,
       url: 'http://localhost:5000/register',
@@ -69,6 +71,19 @@ export const Login = () => {
           loggedIn: true,
         },
       });
+    });
+  };
+
+  const noLogin = () => {
+    history.push({
+      pathname: '/timer',
+      state: {
+        id: '',
+        timer: 0,
+        alert: 0,
+        googleId: false,
+        loggedIn: false,
+      },
     });
   };
 
@@ -152,7 +167,9 @@ export const Login = () => {
         SameSite="None"
       />
 
-      {/* {loggedIn && <Redirect to="/timer" />} */}
+      <p>
+        or proceed without logging in <button onClick={noLogin}>here</button>
+      </p>
     </div>
   );
 };
