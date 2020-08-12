@@ -26,8 +26,8 @@ export const Login = () => {
       data: {
         email: registerEmail,
         password: registerPassword,
-        timer: 0,
-        alert: 0,
+        timer: '0',
+        alert: '0',
       },
       withCredentials: true,
       url: 'http://localhost:5000/register',
@@ -79,8 +79,8 @@ export const Login = () => {
       pathname: '/timer',
       state: {
         id: '',
-        timer: 0,
-        alert: 0,
+        timer: '0',
+        alert: '0',
         googleId: false,
         loggedIn: false,
       },

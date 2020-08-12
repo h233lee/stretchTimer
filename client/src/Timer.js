@@ -7,8 +7,8 @@ import DiscreteSlider from './Slider';
 const Timer = (props) => {
   const [local, setLocal] = useState({
     id: '',
-    timer: 0,
-    alarm: 0,
+    timer: '0',
+    alarm: '0',
     googleId: false,
     loggedIn: false,
   });
