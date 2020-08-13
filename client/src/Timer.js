@@ -3,13 +3,14 @@ import { Link, useHistory } from 'react-router-dom';
 import { GoogleLogout } from 'react-google-login';
 import Axios from 'axios';
 import DiscreteSlider from './Slider';
+import Stopwatch from './Stopwatch';
 
 const Timer = (props) => {
   const [local, setLocal] = useState({
     id: '',
     timer: '0',
     alarm: '0',
-    googleId: false,
+    isgoogleId: false,
     loggedIn: false,
   });
 
@@ -27,7 +28,7 @@ const Timer = (props) => {
         id,
         timer,
         alert,
-        googleId,
+        isgoogleId,
         loggedIn,
       } = props.history.location.state;
 
@@ -35,11 +36,11 @@ const Timer = (props) => {
         id,
         timer,
         alert,
-        googleId,
+        isgoogleId,
         loggedIn,
       });
     }
-  }, []);
+  }, [props.history.location.state]);
 
   const logout = () => {
     Axios({
@@ -58,6 +59,8 @@ const Timer = (props) => {
       data: {
         email: registerEmail,
         password: registerPassword,
+        timer: local.timer,
+        alert: local.alert,
       },
       withCredentials: true,
       url: 'http://localhost:5000/register',
@@ -72,7 +75,7 @@ const Timer = (props) => {
     <div>
       <h1>timer app</h1>
 
-      {local.googleId ? (
+      {local.isgoogleId ? (
         <GoogleLogout
           clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
           buttonText="Logout"
@@ -104,14 +107,20 @@ const Timer = (props) => {
       <h1>timer:{local.timer}</h1>
       <h1>alert:{local.alert}</h1>
 
-      {local.timer && (
-        <DiscreteSlider onChange={setTimer} time={local.timer} name={'timer'} />
-      )}
-
-      {local.alert ? (
-        <DiscreteSlider onChange={setAlert} time={local.alert} name={'alert'} />
-      ) : (
-        local.timer
+      {local.timer && local.alert && (
+        <div>
+          <Stopwatch timer={local.timer} alert={local.alert} />
+          <DiscreteSlider
+            onChange={setTimer}
+            time={local.timer}
+            name={'timer'}
+          />
+          <DiscreteSlider
+            onChange={setAlert}
+            time={local.alert}
+            name={'alert'}
+          />
+        </div>
       )}
     </div>
   );

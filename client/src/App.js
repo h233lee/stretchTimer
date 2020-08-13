@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Login from './Login.js';
 import Timer from './Timer.js';
-import './App.css';
+import './App.scss';
 
 const App = () => {
   return (

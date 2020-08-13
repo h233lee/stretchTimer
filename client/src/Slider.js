@@ -22,7 +22,8 @@ const DiscreteSlider = ({ onChange, time, name }) => {
         {name}
       </Typography>
       <Slider
-        defaultValue={time}
+        defaultValue={time ? parseInt(time) : 0}
+        value={time ? parseInt(time) : 0}
         getAriaValueText={valuetext}
         aria-labelledby="discrete-slider-small-steps"
         step={5}

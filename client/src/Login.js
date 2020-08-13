@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './App.scss';
 import Axios from 'axios';
 import { GoogleLogin } from 'react-google-login';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 export const Login = () => {
   const [registerEmail, setRegisterEmail] = useState('');
@@ -14,7 +14,7 @@ export const Login = () => {
     id: '',
     timer: '',
     alert: '',
-    googleId: false,
+    isgoogleId: false,
     loggedIn: false,
   });
 
@@ -38,7 +38,7 @@ export const Login = () => {
           id: res.data.email,
           timer: res.data.timer,
           alert: res.data.alert,
-          googleId: false,
+          isgoogleId: false,
           loggedIn: true,
         },
       });
@@ -67,7 +67,7 @@ export const Login = () => {
           id: res.data.email,
           timer: res.data.timer,
           alert: res.data.alert,
-          googleId: false,
+          isgoogleId: false,
           loggedIn: true,
         },
       });
@@ -81,7 +81,7 @@ export const Login = () => {
         id: '',
         timer: '0',
         alert: '0',
-        googleId: false,
+        isgoogleId: false,
         loggedIn: false,
       },
     });
@@ -106,7 +106,7 @@ export const Login = () => {
             id: res.data.googleId,
             timer: res.data.timer,
             alert: res.data.alert,
-            googleId: true,
+            isgoogleId: true,
             loggedIn: true,
           },
         });
