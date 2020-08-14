@@ -4,12 +4,13 @@ import { GoogleLogout } from 'react-google-login';
 import Axios from 'axios';
 import DiscreteSlider from './Slider';
 import Stopwatch from './Stopwatch';
+import Grid from '@material-ui/core/Grid';
 
 const Timer = (props) => {
   const [local, setLocal] = useState({
     id: '',
-    timer: '0',
-    alarm: '0',
+    timer: '',
+    alarm: '',
     isgoogleId: false,
     loggedIn: false,
   });
@@ -71,20 +72,56 @@ const Timer = (props) => {
     });
   };
 
+  const updateInfo = () => {
+    Axios({
+      method: 'PUT',
+      data: {
+        email: local.id,
+        timer: local.timer,
+        alert: local.alert,
+      },
+      withCredentials: true,
+      url: 'http://localhost:5000/update',
+    }).then((res) => {
+      setLocal({ ...local, timer: res.data.timer, alert: res.data.alert });
+    });
+  };
+
   return (
     <div>
-      <h1>timer app</h1>
-
+      {local.timer && local.alert && (
+        <div>
+          <Stopwatch timer={local.timer} alert={local.alert} />
+          <Grid align="center">
+            <DiscreteSlider
+              onChange={setTimer}
+              time={local.timer}
+              name={'Timer: In Minutes'}
+            />
+            <DiscreteSlider
+              onChange={setAlert}
+              time={local.alert}
+              name={'Alert: In Seconds'}
+            />
+          </Grid>
+        </div>
+      )}
       {local.isgoogleId ? (
-        <GoogleLogout
-          clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-          buttonText="Logout"
-          onLogoutSuccess={logout}
-        ></GoogleLogout>
+        <div>
+          <GoogleLogout
+            clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+            buttonText="Logout"
+            onLogoutSuccess={logout}
+          ></GoogleLogout>
+          <button onClick={updateInfo}>Update Timer and Alert</button>
+        </div>
       ) : local.id ? (
-        <Link to="/">
-          <button onClick={logout}>Log Out</button>
-        </Link>
+        <div>
+          <Link to="/">
+            <button onClick={logout}>Log Out</button>
+          </Link>
+          <button onClick={updateInfo}>Update Timer and Alert</button>
+        </div>
       ) : (
         <div>
           <div>
@@ -98,28 +135,8 @@ const Timer = (props) => {
               onChange={(e) => setRegisterPassword(e.target.value)}
             />
             <button onClick={register}>Submit</button>
+            <Link to="/">back</Link>
           </div>
-
-          <Link to="/">back</Link>
-        </div>
-      )}
-
-      <h1>timer:{local.timer}</h1>
-      <h1>alert:{local.alert}</h1>
-
-      {local.timer && local.alert && (
-        <div>
-          <Stopwatch timer={local.timer} alert={local.alert} />
-          <DiscreteSlider
-            onChange={setTimer}
-            time={local.timer}
-            name={'timer'}
-          />
-          <DiscreteSlider
-            onChange={setAlert}
-            time={local.alert}
-            name={'alert'}
-          />
         </div>
       )}
     </div>

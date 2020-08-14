@@ -17,6 +17,7 @@ mongoose.connect(
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
+    useFindAndModify: false,
   },
   () => {
     console.log('Mongoose Is Connected');
@@ -95,6 +96,15 @@ app.post('/login/google', (req, res) => {
       await user.save();
       res.json(user);
     }
+  });
+});
+
+app.put('/update', (req, res) => {
+  const filter = { email: req.body.email };
+  const update = { $set: { timer: req.body.timer, alert: req.body.alert } };
+  User.findOneAndUpdate(filter, update, { new: true }).exec((err, user) => {
+    if (err) throw err;
+    res.json(user);
   });
 });
 

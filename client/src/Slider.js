@@ -17,7 +17,7 @@ const DiscreteSlider = ({ onChange, time, name }) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <div className={`classes.root sliders`}>
       <Typography id="discrete-slider-small-steps" gutterBottom>
         {name}
       </Typography>
@@ -26,12 +26,10 @@ const DiscreteSlider = ({ onChange, time, name }) => {
         value={time ? parseInt(time) : 0}
         getAriaValueText={valuetext}
         aria-labelledby="discrete-slider-small-steps"
-        step={5}
-        marks
-        min={0}
+        min={1}
         max={60}
         valueLabelDisplay="on"
-        onChangeCommitted={(e, v) => onChange(v)}
+        onChange={(e, v) => onChange(v)}
       />
     </div>
   );

@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useAlert } from 'react-alert';
 import './App.scss';
 
 const Stopwatch = (props) => {
-  const [timer, setTimer] = useState(0);
-  const [alert, setAlert] = useState(0);
+  const [timer, setTimer] = useState('');
+  const [alert, setAlert] = useState('');
   const [isRunning, setIsRunning] = useState(false);
 
   const timerMinutes = Math.floor(timer / 60);
   let timerSeconds = timer % 60;
   timerSeconds = timerSeconds < 10 ? '0' + timerSeconds : timerSeconds;
+
+  const alertMsg = useAlert();
+
+  const playAudio = () => {
+    document.getElementById('audio').play();
+  };
 
   useEffect(() => {
     if (isRunning) {
@@ -21,10 +28,28 @@ const Stopwatch = (props) => {
   }, [isRunning]);
 
   useEffect(() => {
+    if (isRunning) {
+      const id = window.setInterval(() => {
+        setAlert((alert) => alert - 1);
+      }, 1000);
+      return () => window.clearInterval(id);
+    }
+    return undefined;
+  }, [isRunning]);
+
+  useEffect(() => {
     if (timer === 0) {
       setIsRunning(false);
     }
   }, [timer]);
+
+  useEffect(() => {
+    if (alert === 0) {
+      setAlert(props.alert);
+      alertMsg.show('Change Position');
+      playAudio();
+    }
+  }, [alert, props.alert, alertMsg]);
 
   useEffect(() => {
     setTimer(props.timer * 60);
@@ -62,6 +87,7 @@ const Stopwatch = (props) => {
           onClick={() => {
             setIsRunning(false);
             setTimer(props.timer * 60);
+            setAlert(props.alert);
           }}
         >
           Reset
