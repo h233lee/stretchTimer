@@ -107,35 +107,53 @@ const Timer = (props) => {
         </div>
       )}
       {local.isgoogleId ? (
-        <div>
+        <div className="containers">
           <GoogleLogout
             clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
             buttonText="Logout"
             onLogoutSuccess={logout}
-          ></GoogleLogout>
-          <button onClick={updateInfo}>Update Timer and Alert</button>
+          ></GoogleLogout>{' '}
+          <button className="loggedin" onClick={updateInfo}>
+            Update Timer and Alert
+          </button>
         </div>
       ) : local.id ? (
-        <div>
+        <div className="containers">
           <Link to="/">
-            <button onClick={logout}>Log Out</button>
+            <button className="loggedin" onClick={logout}>
+              Log Out
+            </button>
           </Link>
-          <button onClick={updateInfo}>Update Timer and Alert</button>
+          <button className="loggedin" onClick={updateInfo}>
+            Update Timer and Alert
+          </button>
         </div>
       ) : (
         <div>
           <div>
-            <h1>Register</h1>
-            <input
-              placeholder="email"
-              onChange={(e) => setRegisterEmail(e.target.value)}
-            />
-            <input
-              placeholder="password"
-              onChange={(e) => setRegisterPassword(e.target.value)}
-            />
-            <button onClick={register}>Submit</button>
-            <Link to="/">back</Link>
+            <h2 className="containers">Register</h2>
+            <div className="containers">
+              <input
+                placeholder="email"
+                onChange={(e) => setRegisterEmail(e.target.value)}
+                className="register"
+                placeholder="email"
+                type="email"
+              />
+            </div>
+            <div className="containers">
+              <input
+                placeholder="password"
+                onChange={(e) => setRegisterPassword(e.target.value)}
+                className="register"
+                type="password"
+                placeholder="password"
+              />
+            </div>
+            <div className="containers">
+              <button onClick={register}>Submit</button>
+              <Link to="/"> back</Link>
+            </div>
           </div>
         </div>
       )}

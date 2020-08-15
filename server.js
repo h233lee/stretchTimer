@@ -10,7 +10,8 @@ const bodyParser = require('body-parser');
 const app = express();
 const User = require('./user');
 const { json } = require('body-parser');
-//----------------------------------------- END OF IMPORTS---------------------------------------------------
+const { check, validationResult } = require('express-validator');
+// -------------------Middleware--------------------------------------
 mongoose.connect(
   'mongodb://localhost:27017/stretchTimer',
   {
@@ -29,7 +30,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: 'http://localhost:3000', // <-- location of the react app were connecting to
+    origin: 'http://localhost:3000',
     credentials: true,
   })
 );
@@ -45,41 +46,73 @@ app.use(passport.initialize());
 app.use(passport.session());
 require('./passportConfig')(passport);
 
-//----------------------------------------- END OF MIDDLEWARE---------------------------------------------------
+// -------------------Routes--------------------------------------
+app.post(
+  '/register',
+  [check('email', 'Please include a valid email').isEmail()],
+  async (req, res) => {
+    const errors = validationResult(req);
 
-// Routes
-app.post('/register', (req, res) => {
-  User.findOne({ email: req.body.email }, async (err, user) => {
-    if (err) throw err;
-    if (user) res.json(user).send('user already exists');
-    if (!user) {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-      const user = new User({
-        email: req.body.email,
-        password: hashedPassword,
-        timer: req.body.timer,
-        alert: req.body.alert,
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
       });
-      await user.save();
-      res.json(user);
     }
-  });
-});
 
-app.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) throw err;
-    if (!user) res.send('No User Exists');
-    else {
-      req.logIn(user, (err) => {
+    try {
+      User.findOne({ email: req.body.email }, async (err, user) => {
         if (err) throw err;
+        if (user) res.json(user).send('user already exists');
+        if (!user) {
+          const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-        res.json(user);
+          const user = new User({
+            email: req.body.email,
+            password: hashedPassword,
+            timer: req.body.timer,
+            alert: req.body.alert,
+          });
+          await user.save();
+          res.json(user);
+        }
+      });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
+
+app.post(
+  '/login',
+  [check('email', 'Please include a valid email').isEmail()],
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
       });
     }
-  })(req, res, next);
-});
+
+    try {
+      await passport.authenticate('local', (err, user, info) => {
+        if (err) throw err;
+        if (!user) res.send('No User Exists');
+        else {
+          req.logIn(user, (err) => {
+            if (err) throw err;
+
+            res.json(user);
+          });
+        }
+      })(req, res, next);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
+  }
+);
 
 app.post('/login/google', (req, res) => {
   User.findOne({ email: req.body.email }, async (err, user) => {
@@ -117,7 +150,7 @@ app.get('/logout', (req, res) => {
   req.session.destroy();
   res.send('/');
 });
-//----------------------------------------- END OF ROUTES---------------------------------------------------
+
 //Start Server
 app.listen(5000, () => {
   console.log('Server Has Started');

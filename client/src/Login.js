@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './App.scss';
 import Axios from 'axios';
 import { GoogleLogin } from 'react-google-login';
-import { useHistory, Route, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 export const Login = () => {
   const [registerEmail, setRegisterEmail] = useState('');
@@ -68,7 +68,7 @@ export const Login = () => {
           id: res.data.email,
           timer: res.data.timer,
           alert: res.data.alert,
-          isgoogleId: false,
+          isgoogleId: local.isgoogleId,
           loggedIn: true,
         },
       });
@@ -163,7 +163,7 @@ export const Login = () => {
             <button onClick={register}>Sign Up</button>
             <p>
               or proceed without logging in{' '}
-              <a href to="/timer" onClick={noLogin}>
+              <a to="/timer" onClick={noLogin}>
                 here
               </a>
             </p>
